@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Cafe BC</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="./node_modules/web3/dist/web3.min.js">
+    </script>
+</head>
+<body>
+    <header>
+        <h1 style="text-align:center;">A Class Cafe</h1>
+    </header>
+    <h1>Water and Food</h1>
+    <div class="container">
+        <div class="section_area_grid">
+            <div class="section_grid_item">
+                <div class="section_item_img">
+                    <img src="matchalatte.jpg" width="60" alt="matchalatte">
+                </div>
+                <div class="section_item_text">
+                    <h2>Matcha Latte</h2>
+                    <h3>ราคา 0.06 ETH</h3>
+                </div>
+                <div class="section_item_button">
+                    <button id="transfer1" value="Matcha Latte" style="padding:1rem;background: rgb(182, 165, 243);border-radius: 2px;">ซื้อ</button>
+                </div>
+            </div>
+            <div class="section_grid_item">
+                <div class="section_item_img">
+                    <img src="chocolate.jpg" width="60" alt="chocolate">
+                </div>
+                <div class="section_item_text">
+                    <h2>Chocolate</h2>
+                    <h3>ราคา 0.05 ETH</h3>
+                </div>
+                <div class="section_item_button">
+                    <button id="transfer2" value="Chocolate" style="padding:1rem;background: rgb(182, 165, 243);border-radius: 2px;">ซื้อ</button>
+                </div>
+            </div>
+            <div class="section_grid_item">
+                <div class="section_item_img">
+                    <img src="americano.jpg" width="60" alt="americano">
+                </div>
+                <div class="section_item_text">
+                    <h2>Americano</h2>
+                    <h3>ราคา 0.04 ETH</h3>
+                </div>
+                <div class="section_item_button">
+                    <button id="transfer3" value="Americano Ice" style="padding:1rem;background: rgb(182, 165, 243);border-radius: 2px;">ซื้อ</button>
+                </div>
+            </div>
+            <div class="section_grid_item">
+                <div class="section_item_img">
+                    <img src="salad.jpg" width="60" alt="salad">
+                </div>
+                <div class="section_item_text">
+                    <h2>Salad</h2>
+                    <h3>ราคา 0.03ETH</h3>
+                </div>
+                <div class="section_item_button">
+                    <button id="transfer4" value="Salad" style="padding:1rem;background: rgb(182, 165, 243);border-radius: 2px;">ซื้อ</button>
+                </div>
+            </div>
+            <div class="section_grid_item">
+                <div class="section_item_img">
+                    <img src="sand.jpg" width="60" alt="sand">
+                </div>
+                <div class="section_item_text">
+                    <h2>Sandwich</h2>
+                    <h3>ราคา 0.02 ETH</h3>
+                </div>
+                <div class="section_item_button">
+                    <button id="transfer5" value="Sandwich" style="padding:1rem;background: rgb(182, 165, 243);border-radius: 2px;">ซื้อ</button>
+                </div>
+            </div>
+            <div class="section_grid_item">
+                <div class="section_item_img">
+                    <img src="pizza.jpg" width="60" alt="pizza">
+                </div>
+                <div class="section_item_text">
+                    <h2>Pizza</h2>
+                    <h3>ราคา 0.01 ETH</h3>
+                </div>
+                <div class="section_item_button">
+                    <button id="transfer6" value="Pizza" style="padding:1rem;background: rgb(182, 165, 243);border-radius: 2px;">ซื้อ</button>
+                </div>
+            </div>
+        </div>
+        <div>&nbsp;&nbsp;&nbsp;</div>
+        <div class="section_result_display">
+            <p id="result"></p>
+            <a href="" id="transaction" target="_blank"></a>
+        </div>
+        <div>&nbsp;&nbsp;&nbsp;</div>
+        <table id="t1">
+            <caption></caption>
+            <colgroup>
+                <col span="2" class="c2">
+                <col>
+                <col class="c1">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Order</th>
+                    <th>Owner</th>
+                </tr>
+            </thead>
+            <tbody id="insertionPoint">
+            </tbody>
+        </table>    
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js">
+    </script>
+    <script language="javascript">
+        function insertData(n,o) {
+            var name = n;
+            var addressowner = o;
+            var dt = new Date();
+            document.getElementById("insertionPoint").innerHTML += "<tr><td>" + dt.toLocaleTimeString() + "</td><td>" + name + "</td><td>" + addressowner + "</td></tr>";
+        }
+    </script>
+    <script>
+        if (typeof web3 !== 'undefined') {
+            // this statement is executed if you are using 
+            // MetaMask 
+            async function enableAccounts() {            
+                await ethereum.enable()
+            }        
+            enableAccounts();  
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(
+                new Web3.providers.HttpProvider(
+                "http://localhost:8545"));
+        }
+
+        let abi = [
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "Buy",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "text",
+				"type": "string"
+			}
+		],
+		"name": "Bought",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "text",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "reason",
+				"type": "string"
+			}
+		],
+		"name": "RegistrationError",
+		"type": "event"
+	}
+];
+        var contract = web3.eth.contract(abi);
+        var myContract = contract.at(
+            '0x4B20E34c9DFaf5E95c7817CDbA99851a27f08530');        
+
+        var completeEvent =             
+            myContract.Bought();    
+        var refreshtable = false;
+
+        completeEvent.watch(function(error, result) {
+            if (!error){
+		//$("#result").html("Got it");               
+		if (result.args.from == 
+                   web3.eth.defaultAccount){     
+                   $("#result").html("Order: " + 
+                       result.args.text + " Owner: " + result.args.from);  
+                       if (refreshtable == true){
+                        insertData(result.args.text,result.args.from);
+                        refreshtable = false;
+                    }           
+               }               
+            }
+        });
+        
+        var errorEvent = 
+            myContract.RegistrationError();
+        
+        errorEvent.watch(function(error, result) {
+            if (!error){
+               if (result.args.from == 
+                   web3.eth.defaultAccount){
+                   $("#result").html(
+                       "Error. <br/> Name: " + 
+                       result.args.text + 
+                       "<br/> Reason: " + result.args.reason); 
+               }               
+            }
+        });
+
+        $("#transfer1").click(function() {
+            refreshtable = true;
+            myContract.Buy($("#transfer1").val(),
+            {
+              gas: 300000,
+              from: web3.eth.accounts[0],
+              value: 60000000000000000
+            },
+	    (error, result) => {
+                $("#result").html("waiting for order :)");
+            });
+            
+        });
+
+        $("#transfer2").click(function() {
+            refreshtable = true;
+            myContract.Buy($("#transfer2").val(),
+            {
+              gas: 300000,
+              from: web3.eth.accounts[0],
+              value: 50000000000000000
+            },
+	    (error, result) => {
+                $("#result").html("waiting for order :)");
+            });
+        });
+
+        $("#transfer3").click(function() {
+            refreshtable = true;
+            myContract.Buy($("#transfer3").val(),
+            {
+              gas: 300000,
+              from: web3.eth.accounts[0],
+              value: 40000000000000000
+            },
+	    (error, result) => {
+                $("#result").html("waiting for order :)");
+            });
+        });
+        
+        $("#transfer4").click(function() {
+            refreshtable = true;
+            myContract.Buy($("#transfer4").val(),
+            {
+              gas: 300000,
+              from: web3.eth.accounts[0],
+              value: 30000000000000000
+            },
+	    (error, result) => {
+                $("#result").html("waiting for order :)");
+            });
+        });
+
+        $("#transfer5").click(function() {
+            refreshtable = true;
+            myContract.Buy($("#transfer5").val(),
+            {
+              gas: 300000,
+              from: web3.eth.accounts[0],
+              value: 20000000000000000
+            },
+	    (error, result) => {
+                $("#result").html("waiting for order :)");
+            });
+        });
+        
+        $("#transfer6").click(function() {
+            refreshtable = true;
+            myContract.Buy($("#transfer6").val(),
+            {
+              gas: 300000,
+              from: web3.eth.accounts[0],
+              value: 10000000000000000
+            },
+	    (error, result) => {
+                $("#result").html("waiting for order :)");
+            });
+        });
+    </script>
+</body>
+</html>
